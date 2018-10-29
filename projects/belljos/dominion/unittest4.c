@@ -8,8 +8,18 @@
 #include <limits.h>
 #include "rngs.h"
 
-// set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+int passorfail = 1;
+
+int asserttrue(int a, int b){
+	if(a == b){
+		return 1;
+	}
+	else{
+		passorfail = 0;
+		printf("TEST FAILED. %d does not eqaul %d\n", a, b);
+		return 0;
+	}
+}
 
 int main() {
 	int i;
@@ -32,19 +42,19 @@ int main() {
 	}
 	G.supplyCount[province] = 0;
 
-	assert(isGameOver(&G) == 1);
+	asserttrue(isGameOver(&G), 1);
 
 	//3 supply piles empty
 	G.supplyCount[0] = G.supplyCount[1] = G.supplyCount[2] = 0;
 	if(G.supplyCount[province] < 1)
 		G.supplyCount[province]++;
 
-	assert(isGameOver(&G) == 1);
+	asserttrue(isGameOver(&G), 1);
 
 	//Out of Province cards and 3 total supply piles empty
 	G.supplyCount[0] = G.supplyCount[1] = G.supplyCount[province] = 0;
 
-	assert(isGameOver(&G) == 1);
+	asserttrue(isGameOver(&G), 1);
 
 	//Not out of province cards or 3 total supply piles
 	if(G.supplyCount[province] < 1)
@@ -55,7 +65,7 @@ int main() {
 			G.supplyCount[i]++;
 	}
 
-	assert(isGameOver(&G) == 0);
+	asserttrue(isGameOver(&G), 0);
 
     printf("All tests passed!\n");
 

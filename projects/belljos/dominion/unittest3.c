@@ -1,4 +1,4 @@
-/*Tests numHandCards*/
+/*Tests numHandCards()*/
 
 #include "dominion.h"
 #include "dominion_helpers.h"
@@ -8,8 +8,18 @@
 #include <limits.h>
 #include "rngs.h"
 
-// set NOISY_TEST to 0 to remove printfs from output
-#define NOISY_TEST 1
+int passorfail = 1;
+
+int asserttrue(int a, int b){
+	if(a == b){
+		return 1;
+	}
+	else{
+		passorfail = 0;
+		printf("TEST FAILED. %d does not eqaul %d\n", a, b);
+		return 0;
+	}
+}
 
 int main() {
 	int i;
@@ -30,26 +40,28 @@ int main() {
 		//Test with positive numbers including 0
 		for(i = 0; i < 10; i++){
 			G.handCount[p] = i;
-			assert(numHandCards(&G) == G.handCount[p]);
+			asserttrue(numHandCards(&G), G.handCount[p]);
 		}
 		//Test with negative numbers
 		for(i = -10; i < 0; i++){
 			G.handCount[p] = i;
-			assert(numHandCards(&G) == G.handCount[p]);
+			asserttrue(numHandCards(&G), G.handCount[p]);
 		}
 		//Test with extremely large numbers
 		for(i = 0; i < 10; i++){
 			G.handCount[p] = INT_MAX - i;
-			assert(numHandCards(&G) == G.handCount[p]);
+			asserttrue(numHandCards(&G), G.handCount[p]);
 		}
 		//Test with extremely small numbers
 		for(i = 0; i < 10; i++){
 			G.handCount[p] = INT_MIN + i;
-			assert(numHandCards(&G) == G.handCount[p]);
+			asserttrue(numHandCards(&G), G.handCount[p]);
 		}
 	}
 
-    printf("All tests passed!\n");
+    if(passorfail == 1){
+ 		printf("All tests passed!\n");
+	}
 
     return 0;
 }

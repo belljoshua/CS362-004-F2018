@@ -10,6 +10,19 @@
 
 #define TESTCARD "adventurer"
 
+int passorfail = 1;
+
+int asserttrue(int a, int b){
+	if(a == b){
+		return 1;
+	}
+	else{
+		passorfail = 0;
+		printf("TEST FAILED. %d does not eqaul %d\n", a, b);
+		return 0;
+	}
+}
+
 int main(){
 	int newCards = 0;
     int discarded = 1;
@@ -28,6 +41,7 @@ int main(){
 	printf("----------------- Testing Card: %s ----------------\n", TESTCARD);
 
 	for(i = 0; i < numPlayers; i++){
+		printf("Testing with player %d\n", i+1);
 		// initialize a game state and player cards
 		initializeGame(numPlayers, k, seed, &G);
 
@@ -47,34 +61,36 @@ int main(){
 		}
 
 		newCards = numTreasure2 - numTreasure1;
-		shuffledCards = G.discardCount[i] - testG.dicardCount[i];
+		shuffledCards = G.discardCount[i] - testG.discardCount[i];
 		if(shuffledCards < 0)
 			shuffledCards = 0;
 		printf("hand count = %d, expected = %d\n", testG.handCount[thisPlayer], G.handCount[thisPlayer] + newCards - discarded);
 		printf("deck count = %d, expected = %d\n", testG.deckCount[thisPlayer], G.deckCount[thisPlayer] - newCards + shuffledCards);
-		assert(testG.handCount[thisPlayer] == G.handCount[thisPlayer] + newCards - discarded);
-		assert(testG.deckCount[thisPlayer] == G.deckCount[thisPlayer] - newCards + shuffledCards);
+		asserttrue(testG.handCount[thisPlayer], G.handCount[thisPlayer] + newCards - discarded);
+		asserttrue(testG.deckCount[thisPlayer], G.deckCount[thisPlayer] - newCards + shuffledCards);
 		for(j = 0; j < numPlayers; j++){
 			if(j != thisPlayer){
-				assert(testG.handCount[j] == G.handCount[j]);	//Check if other players' hands changed
-				assert(testG.deckCount[j] == G.deckCount[j]);	//Check if other players' decks changed
-				assert(testG.discardCount[j] == G.discardCount[j]);	//Check if other players' discard count changed
+				asserttrue(testG.handCount[j], G.handCount[j]);	//Check if other players' hands changed
+				asserttrue(testG.deckCount[j], G.deckCount[j]);	//Check if other players' decks changed
+				asserttrue(testG.discardCount[j], G.discardCount[j]);	//Check if other players' discard count changed
 			}
 		}
 		//Check that there was no state change of kingdom or victory cards
-		assert(testG.supplyCount[village] == G.supplyCount[village]);
-		assert(testG.supplyCount[smithy] == G.supplyCount[smithy]);
-		assert(testG.supplyCount[remodel] == G.supplyCount[remodel]);
-		assert(testG.supplyCount[mine] == G.supplyCount[mine]);
-		assert(testG.supplyCount[council_room] == G.supplyCount[council_room]);
-		assert(testG.supplyCount[feast] == G.supplyCount[feast]);
-		assert(testG.supplyCount[gardens] == G.supplyCount[gardens]);
-		assert(testG.supplyCount[duchy] == G.supplyCount[duchy]);
-		assert(testG.supplyCount[estate] == G.supplyCount[estate]);
-		assert(testG.supplyCount[province] == G.supplyCount[province]);
+		asserttrue(testG.supplyCount[village], G.supplyCount[village]);
+		asserttrue(testG.supplyCount[smithy], G.supplyCount[smithy]);
+		asserttrue(testG.supplyCount[remodel], G.supplyCount[remodel]);
+		asserttrue(testG.supplyCount[mine], G.supplyCount[mine]);
+		asserttrue(testG.supplyCount[council_room], G.supplyCount[council_room]);
+		asserttrue(testG.supplyCount[feast], G.supplyCount[feast]);
+		asserttrue(testG.supplyCount[gardens], G.supplyCount[gardens]);
+		asserttrue(testG.supplyCount[duchy], G.supplyCount[duchy]);
+		asserttrue(testG.supplyCount[estate], G.supplyCount[estate]);
+		asserttrue(testG.supplyCount[province], G.supplyCount[province]);
 
 		memset(&G, 23, sizeof(struct gameState));   // clear the game state
 	}
 
-	printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);
+	if(passorfail == 1){
+		printf("\n >>>>> SUCCESS: Testing complete %s <<<<<\n\n", TESTCARD);
+	}
 }
